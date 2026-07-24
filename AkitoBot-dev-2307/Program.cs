@@ -1,11 +1,37 @@
-﻿using Microsoft.Extensions.Hosting;
-using NetCord.Hosting.Gateway;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using NetCord;
+using NetCord.Gateway;
 
-var builder = Host.CreateApplicationBuilder(args);
+// asp.net for container depl
+var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
-// Adds the Discord gateway service to your application host
-builder.Services.AddDiscordGateway();
+var app = builder.Build();
 
-var host = builder.Build();
+app.MapGet("/", () => "Bot is running!");
+_ = app.RunAsync();
 
-await host.RunAsync();
+// netcord
+string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+
+if (string.IsNullOrEmpty(token))
+{
+    Console.WriteLine("Error: DISCORD_TOKEN environment variable is missing.");
+    return;
+}
+
+var client = new GatewayClient(new BotToken(token), new GatewayClientOptions()
+{
+    Intents = GatewayIntents.All
+});
+
+client.Log += message =>
+{
+    Console.WriteLine(message);
+    return default;
+};
+
+await client.StartAsync();
+await Task.Delay(-1pid);
