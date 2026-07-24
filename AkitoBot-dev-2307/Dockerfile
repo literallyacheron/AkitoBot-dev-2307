@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # Set the entry point to your compiled bot assembly
-ENTRYPOINT ["dotnet", "AkitoBot-dev-2307"]
+ENTRYPOINT ["dotnet", "AkitoBot-dev-2307.dll"]
