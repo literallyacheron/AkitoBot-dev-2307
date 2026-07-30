@@ -22,7 +22,6 @@ builder.Services
                         | GatewayIntents.MessageContent;
     })
     // If you are using NetCord command/interaction services, add them here:
-    .AddDiscordGatewayServices();
 
 var host = builder.Build();
 
