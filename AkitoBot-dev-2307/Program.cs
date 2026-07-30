@@ -4,6 +4,7 @@ using NetCord;
 using NetCord.Gateway;
 using NetCord.Hosting;
 using NetCord.Hosting.Gateway;
+using NetCord.Hosting.Services;
 
 var builder = Host.CreateApplicationBuilder(args);
 
