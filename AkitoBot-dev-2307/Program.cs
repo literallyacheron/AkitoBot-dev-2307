@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using NetCord;
 using NetCord.Gateway;
+using NetCord.Logging;
 
 // asp.net for container depl
 var builder = WebApplication.CreateBuilder(args);
