@@ -22,9 +22,10 @@ if (string.IsNullOrEmpty(token))
     return;
 }
 
-var client = new GatewayClient(new BotToken(token), new GatewayClientOptions()
+GatewayClient client = new(new BotToken(token), new GatewayClientConfiguration()
 {
-    Intents = GatewayIntents.All
+    Intents = GatewayIntents.All,
+    Logger = new ConsoleLogger()
 });
 
 client.Log += message =>
