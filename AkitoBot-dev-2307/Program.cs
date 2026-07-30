@@ -1,39 +1,32 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NetCord;
 using NetCord.Gateway;
-using NetCord.Logging;
+using NetCord.Hosting;
+using NetCord.Hosting.Gateway;
 
-// asp.net for container depl
-var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
+var builder = Host.CreateApplicationBuilder(args);
 
-var app = builder.Build();
+// Add NetCord Gateway and Hosting services
+builder.Services
+    .AddDiscordGateway(options =>
+    {
+        // Automatically reads the token from environment variables or configuration if set up,
+        // or you can pull it directly from an environment variable like Back4App uses:
+        options.Token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+        
+        // Configure gateway intents required for your bot
+        options.Intents = GatewayIntents.Guilds 
+                        | GatewayIntents.GuildMessages 
+                        | GatewayIntents.MessageContent;
+    })
+    // If you are using NetCord command/interaction services, add them here:
+    // .AddDiscordGatewayServices();
 
-app.MapGet("/", () => "Bot is running!");
-_ = app.RunAsync();
+var host = builder.Build();
 
-// netcord
-string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+// Register an event listener or startup logic if needed
+host.AddModules(typeof(Program).Assembly); // If you have command modules
 
-if (string.IsNullOrEmpty(token))
-{
-    Console.WriteLine("Error: DISCORD_TOKEN environment variable is missing.");
-    return;
-}
-
-GatewayClient client = new(new BotToken(token), new GatewayClientConfiguration()
-{
-    Intents = GatewayIntents.All,
-    Logger = new ConsoleLogger()
-});
-
-client.Log += message =>
-{
-    Console.WriteLine(message);
-    return default;
-};
-
-await client.StartAsync();
-await Task.Delay(-1);
+// Run the host so the bot stays connected via WebSocket
+await host.RunAsync();
