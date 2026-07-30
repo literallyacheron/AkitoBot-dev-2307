@@ -34,4 +34,4 @@ client.Log += message =>
 };
 
 await client.StartAsync();
-await Task.Delay(-1pid);
+await Task.Delay(-1);
